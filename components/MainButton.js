@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
 		color: 'white',
 		fontFamily: 'open-sans-regular',
 		fontSize: 15,
+		textAlign: 'center',
 	},
 });
 export default MainButton;
