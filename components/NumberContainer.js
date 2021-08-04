@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import colors from '../constants/colors';
-const NumberContainer = ({ children }) => {
+const NumberContainer = ({ children, style }) => {
 	return (
-		<View style={styles.container}>
+		<View style={{ ...styles.container, ...style }}>
 			<Text style={styles.number}>{children}</Text>
 		</View>
 	);

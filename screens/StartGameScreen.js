@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	View,
 	StyleSheet,
@@ -7,6 +7,9 @@ import {
 	TouchableWithoutFeedback,
 	Keyboard,
 	Alert,
+	Dimensions,
+	ScrollView,
+	KeyboardAvoidingView,
 } from 'react-native';
 import Card from '../components/Card';
 import Input from '../components/Input';
@@ -19,6 +22,18 @@ const StartGameScreen = ({ startGame }) => {
 	const [enteredValue, setEnteredValue] = useState('');
 	const [confirmed, setConfirmed] = useState(false);
 	const [selectedNumber, setSelectedNumber] = useState();
+	const [width, setWidth] = useState(Dimensions.get('window').width / 4);
+
+	useEffect(() => {
+		const updateLayout = () => {
+			setWidth(Dimensions.get('window').width / 4);
+		};
+		Dimensions.addEventListener('change', updateLayout);
+
+		return () => {
+			Dimensions.removeEventListener('change', updateLayout);
+		};
+	}, []);
 
 	const confirmHandler = () => {
 		const chosen = +enteredValue;
@@ -70,46 +85,50 @@ const StartGameScreen = ({ startGame }) => {
 	}
 
 	return (
-		<TouchableWithoutFeedback
-			onPress={() => {
-				Keyboard.dismiss();
-			}}
-		>
-			<View style={styles.screen}>
-				<Text style={{ ...styles.title, ...defaultStyles.titleText }}>
-					Start a new Game
-				</Text>
-				<Card style={styles.card}>
-					<Text>Select a number</Text>
-					<Input
-						style={styles.input}
-						keyboardType='number-pad'
-						maxLength={2}
-						onChangeText={(value) =>
-							setEnteredValue(value.replace(/[^0-9]/g, ''))
-						}
-						value={enteredValue}
-					/>
-					<View style={styles.buttonContainer}>
-						<View style={styles.button}>
-							<Button
-								title='Reset'
-								color={colors.primary}
-								onPress={resetHandler}
+		<ScrollView>
+			<KeyboardAvoidingView behavior='height' keyboardVerticalOffset={30}>
+				<TouchableWithoutFeedback
+					onPress={() => {
+						Keyboard.dismiss();
+					}}
+				>
+					<View style={styles.screen}>
+						<Text style={{ ...styles.title, ...defaultStyles.titleText }}>
+							Start a new Game
+						</Text>
+						<Card style={styles.card}>
+							<Text>Select a number</Text>
+							<Input
+								style={styles.input}
+								keyboardType='number-pad'
+								maxLength={2}
+								onChangeText={(value) =>
+									setEnteredValue(value.replace(/[^0-9]/g, ''))
+								}
+								value={enteredValue}
 							/>
-						</View>
-						<View style={styles.button}>
-							<Button
-								title='Confirm'
-								color={colors.secondary}
-								onPress={confirmHandler}
-							/>
-						</View>
+							<View style={styles.buttonContainer}>
+								<View style={{ width }}>
+									<Button
+										title='Reset'
+										color={colors.primary}
+										onPress={resetHandler}
+									/>
+								</View>
+								<View style={{ width }}>
+									<Button
+										title='Confirm'
+										color={colors.secondary}
+										onPress={confirmHandler}
+									/>
+								</View>
+							</View>
+						</Card>
+						{confirmedOut}
 					</View>
-				</Card>
-				{confirmedOut}
-			</View>
-		</TouchableWithoutFeedback>
+				</TouchableWithoutFeedback>
+			</KeyboardAvoidingView>
+		</ScrollView>
 	);
 };
 
@@ -130,13 +149,16 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		paddingHorizontal: 15,
 	},
+
 	card: {
-		width: 300,
-		maxWidth: '80%',
+		width: '80%',
+		maxWidth: '95%',
+		minWidth: 300,
 		alignItems: 'center',
 	},
 	button: {
-		width: '40%',
+		// width: '40%',
+		width: Dimensions.get('window').width,
 	},
 	input: {
 		width: 50,
